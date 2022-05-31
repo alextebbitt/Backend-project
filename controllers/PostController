@@ -22,6 +22,51 @@ const PostController = {
       res.status(500).send(error);
     }
   },
+  async getById(req, res) {
+    try {
+      const post = await Post.findById(req.params._id);
+
+      res.send(post);
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  async getPostsByName(req, res) {
+    try {
+      if (req.params.name.length > 20) {
+        return res.status(400).send("Search too long");
+      }
+      const name = new RegExp(req.params.name, "i");
+      const post = await Post.find({ name });
+      res.send(post);
+    } catch (error) {
+      console.log(error);
+      res.status(500).send(error);
+    }
+  },
+  async delete(req, res) {
+    try {
+      const post = await Post.findByIdAndDelete(req.params._id);
+      res.send({ post, message: "Post deleted" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({
+        message: "There was a problem trying to remove the post",
+      });
+    }
+  },
+  async update(req, res) {
+    try {
+      const post = await Post.findByIdAndUpdate(
+        req.params._id,
+        req.body,
+        { new: true }
+      );
+      res.send({ message: "post successfully updated", post });
+    } catch (error) {
+      console.error(error);
+    }
+  },
 };
 
 module.exports = PostController;

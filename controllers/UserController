@@ -1,0 +1,142 @@
+const User = require("../models/User");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const transporter = require("../config/nodemailer");
+//const { jwt_secret } = require("../config/config.json")["development"];
+
+const UserController = {
+//   create(req, res) {
+//     req.body.role = "user";
+//     const password = bcrypt.hashSync(req.body.password, 10);
+//     User.create({ ...req.body, password: password })
+//       .then((user) =>
+//         res.status(201).send({ message: "Usuario creado con éxito", user })
+//       )
+//       .catch(console.error);
+//   },
+
+  async create(req, res, next) {
+    try {
+      const hash = bcrypt.hashSync(req.body.password, 10);
+      const user = await User.create({
+        ...req.body,
+        password: hash,
+        confirmed: false,
+        //role: "user",
+      });
+      await transporter.sendMail({
+        to: req.body.email,
+        subject: "Confirme su registro",
+        html: `<h3>Bienvenido, estás a un paso de registrarte </h3>
+<a href="#"> Click para confirmar tu registro</a>`,
+      });
+      res.status(201).send({
+        message: "Te hemos enviado un correo para confirmar el registro",
+        user,
+      });
+    } catch (err) {
+      err.origin = "User";
+      next(err);
+    }
+  },
+
+  async getAllUsers(req, res) {
+    try {
+      const users = await User.find();
+
+      res.send(users);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send(error);
+    }
+  },
+  async getUserById(req, res) {
+    try {
+      const user = await User.findById(req.params._id);
+
+      res.send(user);
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  async getUsersByName(req, res) {
+    try {
+      if (req.params.name.length > 20) {
+        return res.status(400).send("Search too long");
+      }
+      const name = new RegExp(req.params.name, "i");
+      const user = await User.find({ name });
+      res.send(user);
+    } catch (error) {
+      console.log(error);
+      res.status(500).send(error);
+    }
+  },
+  async delete(req, res) {
+    try {
+      const user = await User.findByIdAndDelete(req.params._id);
+      res.send({ user, message: "User deleted" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({
+        message: "There was a problem trying to remove the user",
+      });
+    }
+  },
+  async update(req, res) {
+    try {
+      const user = await User.findByIdAndUpdate(req.params._id, req.body, {
+        new: true,
+      });
+      res.send({ message: "User successfully updated", user });
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  //   login(req, res) {
+  //     User.findOne({
+  //       where: {
+  //         email: req.body.email,
+  //       },
+  //     }).then((user) => {
+  //       if (!user) {
+  //         return res
+  //           .status(400)
+  //           .send({ message: "Username or password incorrect" });
+  //       }
+  //       const isMatch = bcrypt.compareSync(req.body.password, user.password);
+  //       if (!isMatch) {
+  //         return res
+  //           .status(400)
+  //           .send({ message: "Username or password incorrect" });
+  //       }
+  //       res.send(user);
+  //     });
+  //   },
+  async login(req, res) {
+    try {
+      const user = await User.findOne({
+        where: {
+          email: req.body.email,
+        },
+      });
+      if (!user) {
+        return res
+          .status(400)
+          .send({ message: "Username or password incorrect" });
+      }
+      const isMatch = bcrypt.compareSync(req.body.password, user.password);
+      if (!isMatch) {
+        return res
+          .status(400)
+          .send({ message: "Username or password incorrect" });
+      }
+      res.send(user);
+    } catch (error) {
+      console.error(error);
+      res.send(error);
+    }
+  },
+};
+
+module.exports = UserController;
