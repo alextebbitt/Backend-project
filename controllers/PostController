@@ -12,6 +12,16 @@ const PostController = {
         .send({ message: "There was a problem with creating the post" });
     }
   },
+  async getAll(req, res) {
+    try {
+      const posts = await Post.find();
+
+      res.send(posts);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send(error);
+    }
+  },
 };
 
 module.exports = PostController;
