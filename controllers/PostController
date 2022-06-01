@@ -33,11 +33,11 @@ const PostController = {
   },
   async getPostsByName(req, res) {
     try {
-      if (req.params.name.length > 20) {
+      if (req.params.title.length > 20) {
         return res.status(400).send("Search too long");
       }
-      const name = new RegExp(req.params.name, "i");
-      const post = await Post.find({ name });
+      const title = new RegExp(req.params.title, "i");
+      const post = await Post.find({ title });
       res.send(post);
     } catch (error) {
       console.log(error);

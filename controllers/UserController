@@ -28,13 +28,13 @@ const UserController = {
         expiresIn: "48h",
       });
 
-    //   const url = "http://localhost:8787/users/confirm/" + emailToken;
-    //   await transporter.sendMail({
-    //     to: req.body.email,
-    //     subject: "Confirm your email",
-    //     html: `<h3>Welcome! you are one step closer to registering </h3>
-    //   <a href="${url}"> Click para confirmar tu registro</a>`,
-    //   });
+      //   const url = "http://localhost:8787/users/confirm/" + emailToken;
+      //   await transporter.sendMail({
+      //     to: req.body.email,
+      //     subject: "Confirm your email",
+      //     html: `<h3>Welcome! you are one step closer to registering </h3>
+      //   <a href="${url}"> Click para confirmar tu registro</a>`,
+      //   });
       res.status(201).send({
         message: "We have sent you an email to confirm your register",
         user,
@@ -92,7 +92,7 @@ const UserController = {
   },
   async update(req, res) {
     try {
-      const user = await User.findByIdAndUpdate(req.params._id, req.body, {
+      const user = await User.findByIdAndUpdate(req.user._id, req.body, {
         new: true,
       });
       res.send({ message: "User successfully updated", user });
@@ -120,7 +120,7 @@ const UserController = {
       const payload = jwt.verify(token, jwt_secret);
       const user = await User.findOneAndUpdate(
         {
-            email: payload.email,
+          email: payload.email,
         },
         { confirmed: true },
         { new: true }
@@ -130,6 +130,19 @@ const UserController = {
       console.error(error);
     }
   },
+ async logout(req, res) {
+    try {
+      await User.findByIdAndUpdate(req.user._id, {
+        $pull: { tokens: req.headers.authorization },
+      });
+      res.send({ message: "Desconectado con éxito" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({
+        message: "Hubo un problema al intentar desconectar al usuario",
+      });
+    }
+  }
 };
 
 module.exports = UserController;
