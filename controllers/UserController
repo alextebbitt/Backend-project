@@ -2,20 +2,20 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const transporter = require("../config/nodemailer");
-//const { jwt_secret } = require("../config/config.json")["development"];
+//const { jwt_secret } = require("../config/keys.js")["development"];
 
 const UserController = {
-//   create(req, res) {
-//     req.body.role = "user";
-//     const password = bcrypt.hashSync(req.body.password, 10);
-//     User.create({ ...req.body, password: password })
-//       .then((user) =>
-//         res.status(201).send({ message: "Usuario creado con éxito", user })
-//       )
-//       .catch(console.error);
-//   },
+  //   create(req, res) {
+  //     req.body.role = "user";
+  //     const password = bcrypt.hashSync(req.body.password, 10);
+  //     User.create({ ...req.body, password: password })
+  //       .then((user) =>
+  //         res.status(201).send({ message: "Usuario creado con éxito", user })
+  //       )
+  //       .catch(console.error);
+  //   },
 
-  async create(req, res, next) {
+  async create(req, res) {
     try {
       const hash = bcrypt.hashSync(req.body.password, 10);
       const user = await User.create({
@@ -26,17 +26,19 @@ const UserController = {
       });
       await transporter.sendMail({
         to: req.body.email,
-        subject: "Confirme su registro",
-        html: `<h3>Bienvenido, estás a un paso de registrarte </h3>
-<a href="#"> Click para confirmar tu registro</a>`,
+        subject: "Confirm your email",
+        html: `<h3>Welcome! you are one step closer to registering </h3>
+      <a href="#"> Click to confirm your register</a>`,
       });
       res.status(201).send({
-        message: "Te hemos enviado un correo para confirmar el registro",
+        message: "We have sent you an email to confirm your register",
         user,
       });
     } catch (err) {
-      err.origin = "User";
-      next(err);
+      console.log(err);
+      res.status(500).send({ msg: "error" });
+      // err.origin = "User";
+      // next(err);
     }
   },
 
@@ -116,25 +118,30 @@ const UserController = {
   async login(req, res) {
     try {
       const user = await User.findOne({
-        where: {
-          email: req.body.email,
-        },
+        email: req.body.email,
       });
-      if (!user) {
-        return res
-          .status(400)
-          .send({ message: "Username or password incorrect" });
-      }
-      const isMatch = bcrypt.compareSync(req.body.password, user.password);
-      if (!isMatch) {
-        return res
-          .status(400)
-          .send({ message: "Username or password incorrect" });
-      }
-      res.send(user);
+      const token = jwt.sign({ _id: user._id }, jwt_secret); //creo el token
+      if (user.tokens.length > 4) user.tokens.shift();
+      user.tokens.push(token);
+      await user.save();
+      res.send({ message: "Welcome " + user.name, token });
     } catch (error) {
       console.error(error);
-      res.send(error);
+    }
+  },
+  async confirm(req, res) {
+    try {
+      const user = await User.updateOne(
+        { confirmed: true },
+        {
+          where: {
+            email: req.params.email,
+          },
+        }
+      );
+      res.status(201).send("User confirmed");
+    } catch (error) {
+      console.error(error);
     }
   },
 };

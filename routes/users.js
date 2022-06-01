@@ -9,5 +9,6 @@ router.get("/search/:name", UserController.getUsersByName);
 router.delete("/id/:_id", UserController.delete);
 router.put("/:_id", UserController.update);
 router.post("/login", UserController.login);
+router.get("/confirm/:email", UserController.confirm);
 
 module.exports = router;
