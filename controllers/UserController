@@ -1,23 +1,19 @@
 const User = require("../models/User");
+const Post = require("../models/Post");
+
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const transporter = require("../config/nodemailer");
 const { jwt_secret } = require("../config/keys.js");
 
 const UserController = {
-  //   create(req, res) {
-  //     req.body.role = "user";
-  //     const password = bcrypt.hashSync(req.body.password, 10);
-  //     User.create({ ...req.body, password: password })
-  //       .then((user) =>
-  //         res.status(201).send({ message: "Usuario creado con éxito", user })
-  //       )
-  //       .catch(console.error);
-  //   },
-
-  async create(req, res) {
+ 
+  async create(req, res, next) {
     try {
-      const hash = bcrypt.hashSync(req.body.password, 10);
+      let hash = req.body.password ? req.body.password : null;
+      if (req.body.password) {
+        hash = bcrypt.hashSync(req.body.password, 10);
+      }
       const user = await User.create({
         ...req.body,
         password: hash,
@@ -36,14 +32,13 @@ const UserController = {
       //   <a href="${url}"> Click para confirmar tu registro</a>`,
       //   });
       res.status(201).send({
-        message: "We have sent you an email to confirm your register",
+        message: "We have sent you an email to confirm your registration",
         user,
       });
     } catch (err) {
-      console.log(err);
-      res.status(500).send({ msg: "There was an error, please make sure you have filled in all information correctly " });
-      // err.origin = "User";
-      // next(err);
+      //   res.status(500).send({ msg: "There was an error, please make sure you have filled in all information correctly " });
+      err.origin = "User";
+      next(err);
     }
   },
 
@@ -100,13 +95,28 @@ const UserController = {
       console.error(error);
     }
   },
-  async login(req, res) {
+  async login(req, res, next) {
     try {
+      if (!req.body.password || !req.body.email) {
+        return res.status(400).json({
+          message: "Por favor rellene los campos que faltan",
+        });
+      }
+
       const user = await User.findOne({
         email: req.body.email,
       });
-      if(!user.confirmed){
-          res.status(404).send({msg: "Please confirm your email"} )
+
+      const isMatch = await bcrypt.compare(req.body.password, user.password);
+
+      if (!isMatch) {
+        return res
+          .status(400)
+          .send({ message: "Contraseña o nombre incorrectos" });
+      }
+
+      if (!user.confirmed) {
+        res.status(404).send({ msg: "Please confirm your email" });
       }
       const token = jwt.sign({ _id: user._id }, jwt_secret); //creo el token
       if (user.tokens.length > 4) user.tokens.shift();
@@ -115,6 +125,9 @@ const UserController = {
       res.send({ message: "Welcome " + user.name, token });
     } catch (error) {
       console.error(error);
+      res.status(500).send({
+        message: "Hubo un problema al intentar logear al usuario",
+      });
     }
   },
   async confirm(req, res) {
@@ -133,7 +146,7 @@ const UserController = {
       console.error(error);
     }
   },
- async logout(req, res) {
+  async logout(req, res) {
     try {
       await User.findByIdAndUpdate(req.user._id, {
         $pull: { tokens: req.headers.authorization },
@@ -145,7 +158,34 @@ const UserController = {
         message: "Hubo un problema al intentar desconectar al usuario",
       });
     }
-  }
+  },
+  //   async getInfo(req, res) {
+  //     try {
+  //       const user = await User.findById(req.user._id).populate("postIds");
+
+  //       res.send(user);
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   },
+  async getInfo(req, res) {
+    try {
+      const user = await User.findById(req.user._id).populate({
+        path: "postIds",
+
+        populate: {
+          path: "comments.userId",
+        },
+      });
+
+      res.send(user);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({
+        message: "Hubo un problema al obtener usuario",
+      });
+    }
+  },
 };
 
 module.exports = UserController;
