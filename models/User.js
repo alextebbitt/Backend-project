@@ -20,6 +20,7 @@ const UserSchema = new mongoose.Schema(
     tokens: [],
     role: String,
     postIds: [{ type: ObjectId, ref: "Post" }],
+    favourites: [{ type: ObjectId, ref: "Post" }]
   },
   { timestamps: true }
 );

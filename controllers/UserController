@@ -7,7 +7,6 @@ const transporter = require("../config/nodemailer");
 const { jwt_secret } = require("../config/keys.js");
 
 const UserController = {
- 
   async create(req, res, next) {
     try {
       let hash = req.body.password ? req.body.password : null;
@@ -186,6 +185,7 @@ const UserController = {
       });
     }
   },
+  
 };
 
 module.exports = UserController;

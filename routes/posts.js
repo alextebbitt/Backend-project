@@ -11,6 +11,7 @@ router.delete("/id/:_id", authentication, PostController.delete);
 router.put("/:_id", authentication, isAdmin, PostController.update);
 router.put("/comments/:_id", authentication, PostController.insertComment);
 router.put("/likes/:_id", authentication, PostController.like);
+router.put("/unlike/:_id", authentication, PostController.unLike);
 
 
 module.exports = router;
