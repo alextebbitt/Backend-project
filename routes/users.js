@@ -13,5 +13,7 @@ router.get("/confirm/:emailToken", UserController.confirm);
 router.post("/login",  UserController.login);
 router.put("/logout", authentication, UserController.logout);
 router.get("/getinfo", authentication, UserController.getInfo);
+router.put("/follow/:_id", authentication, UserController.follow);
+router.put("/unfollow/:_id", authentication, UserController.unFollow);
 
 module.exports = router;

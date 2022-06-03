@@ -186,7 +186,41 @@ const UserController = {
       });
     }
   },
-  
+  async follow(req, res) {
+    try {
+      const existUser = await User.findById(req.params._id); // get id from params
+      if (!existUser.followers.includes(req.user._id)) {
+        // if the id of user is not already in followers
+        const user = await User.findByIdAndUpdate(
+          req.params._id,
+          { $push: { followers: req.user._id } }, //push user on to following list
+          { new: true } // update and show updat
+        );
+        res.send(user);
+      } else {
+        res.status(400).send({ message: "You already follow this person!" });
+      }
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .send({ message: "There was a problem with following this person." });
+    }
+  },
+  async unFollow(req, res) {
+    try {
+      const user = await User.findByIdAndUpdate(
+        req.params._id,
+        { $pull: { followers: req.user._id } },
+        { new: true }
+      );
+      res.send(user);
+    } catch (error) {
+      console.error(error);
+
+      res.status(500).send({ message: "There was a problem with your unfollow" });
+    }
+  },
 };
 
 module.exports = UserController;
