@@ -21,10 +21,20 @@ const UserSchema = new mongoose.Schema(
     role: String,
     postIds: [{ type: ObjectId, ref: "Post" }],
     favourites: [{ type: ObjectId, ref: "Post" }],
-    followers: [{ type: ObjectId }]
+    followers: [{ type: ObjectId, ref: "User" }],
+    following: [{ type: ObjectId, ref: "User" }],
   },
   { timestamps: true }
 );
+UserSchema.methods.toJSON = function() {
 
+const user = this._doc;
+
+delete user.tokens;
+
+delete user.password;
+
+return user;
+}
 const User = mongoose.model("User", UserSchema);
 module.exports = User;

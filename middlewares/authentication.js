@@ -46,4 +46,5 @@ const isAuthor = async (req, res, next) => {
     });
   }
 };
+
 module.exports = { authentication, isAdmin, isAuthor };
