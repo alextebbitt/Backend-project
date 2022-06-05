@@ -14,16 +14,11 @@ const PostController = {
       next(err);
     }
   },
-  //   async getAll(req, res) {
-  //     try {
-  //       const posts = await Post.find();
 
-  //       res.send(posts);
-  //     } catch (error) {
-  //       console.error(error);
-  //       res.status(500).send(error);
-  //     }
-  //   },
+  getOk(req, res) {
+    res.status(201).send("ok go");
+  },
+
   async getAll(req, res) {
     try {
       const { page = 1, limit = 5 } = req.query;

@@ -24,16 +24,21 @@ const UserController = {
         expiresIn: "48h",
       });
 
-        // const url = "http://localhost:8787/users/confirm/" + emailToken;
-        // await transporter.sendMail({
-        //   to: req.body.email,
-        //   subject: "Confirm your email",
-        //   html: `<h3>Welcome! you are one step closer to registering </h3>
-        // <a href="${url}"> Click para confirmar tu registro</a>`,
-        // });
+      // const url = "http://localhost:8787/users/confirm/" + emailToken;
+      // await transporter.sendMail({
+      //   to: req.body.email,
+      //   subject: "Confirm your email",
+      //   html: `<h3>Welcome! you are one step closer to registering </h3>
+      // <a href="${url}"> Click para confirmar tu registro</a>`,
+      // });
       res.status(201).send({
         message: "We have sent you an email to confirm your registration",
-        user,
+        user: {
+          name: user.name,
+          email: user.email,
+          createdAt: user.createAt,
+          updatedAt: user.updatedAt
+        },
       });
     } catch (err) {
       //   res.status(500).send({ msg: "There was an error, please make sure you have filled in all information correctly " });
@@ -110,9 +115,7 @@ const UserController = {
       const isMatch = await bcrypt.compare(req.body.password, user.password);
 
       if (!isMatch) {
-        return res
-          .status(400)
-          .send({ message: "Password or name incorrect" });
+        return res.status(400).send({ message: "Password or name incorrect" });
       }
 
       if (!user.confirmed) {

@@ -1,10 +1,15 @@
 const mongoose = require("mongoose");
-require("dotenv").config();
-const MONGO_URI = process.env.MONGO_URI; 
+
+let configFile = process.env.NODE_ENV + ".env";
+require("dotenv").config({ path: configFile });
+
+var mongoUri = process.env.MONGO_URI;
+const PORT = process.env.PORT;
 
 const dbConnection = async () => {
   try {
-    await mongoose.connect(MONGO_URI);
+    console.log("db" + mongoUri);
+    await mongoose.connect(process.env.MONGO_URI);
     console.log("Base de datos conectada con éxito");
   } catch (error) {
     console.error(error);
