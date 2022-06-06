@@ -1,7 +1,15 @@
 const request = require("supertest");
 const User = require("../models/User");
 const app = require("../index.js");
+const jwt = require("jsonwebtoken");
+let configFile = process.env.NODE_ENV + ".env";
+
+require("dotenv").config({ path: configFile });
+let jwt_secret = process.env.JWT_SECRET;
 console.log("app is" + app);
+
+
+
 describe("testing/users", () => {
     const user = {
         name: "Username",
@@ -32,6 +40,18 @@ describe("testing/users", () => {
 
     afterAll(() => {
         return User.deleteMany();
+    });
+    describe("testing/users", () => {
+        test("Confirm a user", async () => {
+
+            const emailToken = jwt.sign({ email: user.email }, jwt_secret, {
+                expiresIn: "48h",
+            });
+            const res = await request(app)
+                .get("/users/confirm/" + emailToken)
+                .expect(201);
+            expect(res.text).toBe("User confirmed");
+        });
     });
     describe("testing/users", () => {
         let token;

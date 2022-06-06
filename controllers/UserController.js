@@ -42,7 +42,6 @@ const UserController = {
         },
       });
     } catch (err) {
-      //   res.status(500).send({ msg: "There was an error, please make sure you have filled in all information correctly " });
       err.origin = "User";
       next(err);
     }
@@ -164,15 +163,6 @@ const UserController = {
       });
     }
   },
-  //   async getInfo(req, res) {
-  //     try {
-  //       const user = await User.findById(req.user._id).populate("postIds");
-
-  //       res.send(user);
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   },
   async getInfo(req, res) {
     try {
       const user = await User.findById(req.user._id)
