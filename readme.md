@@ -15,7 +15,7 @@ I have created a social network. This includes posts, users, comments, likes, un
 
 ### Essential requirements of the project:
 * Use of branches with git, when the project is finished there should be two branches, the master or main and the develop.
-* Excellent README presentation.
+
 
 ### Technologies used
 * Javascript
@@ -80,7 +80,7 @@ I want to thank our teachers for their help and pacience with me during this tim
 
 ## Authors
 
-[Alex (@alextebbitt)](https://github.com/alextebbitt) & [tianfanshan (@tianfanshan)](https://github.com/tianfanshan)
+[Alex (@alextebbitt)](https://github.com/alextebbitt) 
 
 
 ## License

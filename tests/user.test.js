@@ -2,13 +2,11 @@ const request = require("supertest");
 const User = require("../models/User");
 const app = require("../index.js");
 const jwt = require("jsonwebtoken");
+// const { token } = require("../index.js");
 let configFile = process.env.NODE_ENV + ".env";
-
+let token;
 require("dotenv").config({ path: configFile });
 let jwt_secret = process.env.JWT_SECRET;
-console.log("app is" + app);
-
-
 
 describe("testing/users", () => {
     const user = {
@@ -65,4 +63,23 @@ describe("testing/users", () => {
         });
 
     });
+    let token;
+    test("Get users", async () => {
+        const res = await request(app)
+            .get("/users")
+            .expect(200)
+            .set({token})
+        expect(res.body).toBeInstanceOf(Array);
+
+    });
+    // test("Update a user record", async () => {
+    //     const updateUser = { name: "Updated name" };
+    //     const res = await request(app)
+    //         .put("/users/id/1")
+    //         .send(updateUser)
+    //         .set({ token })
+    //         .expect(200);
+    //     expect(res.text).toBe("Usuario actualizado con éxito");
+
+    // });
 });
