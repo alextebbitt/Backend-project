@@ -23,6 +23,7 @@ const UserSchema = new mongoose.Schema(
     favourites: [{ type: ObjectId, ref: "Post" }],
     followers: [{ type: ObjectId, ref: "User" }],
     following: [{ type: ObjectId, ref: "User" }],
+    image_path: { type: String }
   },
   { timestamps: true }
 );

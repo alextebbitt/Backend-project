@@ -33,4 +33,16 @@ describe("testing/users", () => {
     afterAll(() => {
         return User.deleteMany();
     });
+    describe("testing/users", () => {
+        let token;
+        test("Login a user", async () => {
+            const res = await request(app)
+                .post("/users/login")
+                .send({ email: "test@example.com", password: "123456" })
+                .expect(200);
+            token = res.body.token;
+
+        });
+
+    });
 });

@@ -18,6 +18,7 @@ const PostSchema = new mongoose.Schema(
     ],
     userId: { type: ObjectId, ref: "User" },
     likes: [{ type: ObjectId }],
+    image_path: { type: String }
   },
   { timestamps: true }
 );

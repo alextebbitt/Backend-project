@@ -10,6 +10,7 @@ const jwt_secret = process.env.JWT_SECRET;
 const UserController = {
   async create(req, res, next) {
     try {
+      if (req.file) req.body.image_path = req.file.filename;
       let hash = req.body.password ? req.body.password : null;
       if (req.body.password) {
         hash = bcrypt.hashSync(req.body.password, 10);
@@ -92,6 +93,7 @@ const UserController = {
   },
   async update(req, res) {
     try {
+      if (req.file) req.body.image_path = req.file.filename;
       const user = await User.findByIdAndUpdate(req.user._id, req.body, {
         new: true,
       });
