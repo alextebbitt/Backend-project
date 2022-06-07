@@ -47,7 +47,6 @@ module.exports = {
                 },
             },
             put: {
-                put: {
                     tags: {
                         Tasks: "Update a user",
                     },
@@ -77,6 +76,5 @@ module.exports = {
                     },
                 },
             },
-        },
     },
 };
