@@ -67,7 +67,6 @@ describe("testing/users", () => {
     });
 
     test("Update a user record", async () => {
-        console.warn(token)
 
         const updateUser = { name: "Updated name" };
         const user = await User.findOne({ name: "Username" })
@@ -76,8 +75,17 @@ describe("testing/users", () => {
             .send(updateUser)
             .set({ Authorization: token })
             .expect(200);
-        token = res.body.token;
         expect(res.body.message).toBe("User successfully updated");
+
+    });
+    
+    test("Logout a user record", async () => {
+        const res = await request(app)
+            .delete("/users/logout" + user._id)
+            .set({ Authorization: token })
+            .expect(200);
+        
+        expect(res.body.message).toBe("You have logged out!");
 
     });
 });

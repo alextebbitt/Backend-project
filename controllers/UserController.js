@@ -158,7 +158,7 @@ const UserController = {
       await User.findByIdAndUpdate(req.user._id, {
         $pull: { tokens: req.headers.authorization },
       });
-      res.send({ message: "Desconectado con éxito" });
+      res.send({ message: "You have logged out!" });
     } catch (error) {
       console.error(error);
       res.status(500).send({
