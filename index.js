@@ -10,7 +10,7 @@ const docs = require('./docs/index')
 dbConnection();
 app.use("/posts", require("./routes/posts"));
 app.use("/users", require("./routes/users"));
-app.use(typeError);
+//app.use(typeError);
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(docs))
 app.listen(PORT, console.log(`Server started on port ${PORT}`));
 module.exports = app;

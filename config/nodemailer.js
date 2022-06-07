@@ -3,7 +3,7 @@ const User = require("../models/User");
 require("dotenv").config();
 const { USER, PASS } = process.env;
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 8787;
 
 let transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
