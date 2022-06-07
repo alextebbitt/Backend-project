@@ -115,11 +115,11 @@ const UserController = {
       const user = await User.findOne({
         email: req.body.email,
       });
-
-      const isMatch = await bcrypt.compare(req.body.password, user.password);
+      console.log(user);
+      const isMatch = await bcrypt.compare(req.body.password , user.password);
 
       if (!isMatch) {
-        return res.status(400).send({ message: "Password or name incorrect" });
+        return res.status(400).send({ message: "Password or email incorrect" });
       }
 
       if (!user.confirmed) {
