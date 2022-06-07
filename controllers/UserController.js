@@ -82,9 +82,6 @@ const UserController = {
   async delete(req, res) {
     try {
       const user = await User.findByIdAndDelete(req.params._id);
-      Post.deleteMany({
-        userId: req.params._id
-      })
       res.send({ user, message: "User deleted" });
     } catch (error) {
       console.error(error);
@@ -96,6 +93,9 @@ const UserController = {
   async update(req, res) {
     try {
       if (req.file) req.body.image_path = req.file.filename;
+      if (req.body.password) {
+        req.body.password = bcrypt.hashSync(req.body.password, 10);
+      }
       const user = await User.findByIdAndUpdate(req.user._id, req.body, {
         new: true,
       });
@@ -115,11 +115,11 @@ const UserController = {
       const user = await User.findOne({
         email: req.body.email,
       });
-      console.log(user);
-      const isMatch = await bcrypt.compare(req.body.password , user.password);
+
+      const isMatch = await bcrypt.compare(req.body.password, user.password);
 
       if (!isMatch) {
-        return res.status(400).send({ message: "Password or email incorrect" });
+        return res.status(400).send({ message: "Password or name incorrect" });
       }
 
       if (!user.confirmed) {
@@ -158,7 +158,7 @@ const UserController = {
       await User.findByIdAndUpdate(req.user._id, {
         $pull: { tokens: req.headers.authorization },
       });
-      res.send({ message: "You have logged out!" });
+      res.send({ message: "Disconnected successfully" });
     } catch (error) {
       console.error(error);
       res.status(500).send({

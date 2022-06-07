@@ -1,7 +1,7 @@
 module.exports = {
     components: {
         schemas: {
-            task: {
+            user: {
                 type: 'object',
                 properties: {
                     _id: {
@@ -60,7 +60,35 @@ module.exports = {
                         example: 'imagefile.png'
                     }
                 }
-            }
+           
+            },
+             userInput: {
+                type: 'object',
+                properties: {
+                    name: {
+                        type: 'string',
+                        description: "user name",
+                        example: "John"
+                    },
+                    email: {
+                        type: 'string',
+                        description: "user email",
+                        example: "John@gmail.com"
+                    },
+                    password: {
+                        type: 'string',
+                        description: "user password",
+                        example: "12345"
+                    },
+                   
+                }
+
+            },
+            UpdateUser: {
+                type: 'objectId',
+                description: "An id of a user",
+                example: "6201064b0028de7866e2b2c4"
+            },
         }
     }
 }

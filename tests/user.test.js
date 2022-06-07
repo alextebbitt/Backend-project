@@ -75,17 +75,18 @@ describe("testing/users", () => {
             .send(updateUser)
             .set({ Authorization: token })
             .expect(200);
+        console.warn(res.body)
         expect(res.body.message).toBe("User successfully updated");
 
     });
-    
+
     test("Logout a user record", async () => {
         const res = await request(app)
-            .delete("/users/logout" + user._id)
+            .put("/users/logout/")
             .set({ Authorization: token })
             .expect(200);
-        
-        expect(res.body.message).toBe("You have logged out!");
+
+        expect(res.body.message).toBe("Disconnected successfully");
 
     });
 });

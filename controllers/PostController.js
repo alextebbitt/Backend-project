@@ -16,11 +16,6 @@ const PostController = {
       next(err);
     }
   },
-
-  getOk(req, res) {
-    res.status(201).send("ok go");
-  },
-
   async getAll(req, res) {
     try {
       const { page = 1, limit = 5 } = req.query;
@@ -34,11 +29,9 @@ const PostController = {
       console.error(error);
     }
   },
-
   async getById(req, res) {
     try {
       const post = await Post.findById(req.params._id);
-
       res.send(post);
     } catch (error) {
       console.error(error);
@@ -74,7 +67,7 @@ const PostController = {
       const post = await Post.findByIdAndUpdate(req.params._id, req.body, {
         new: true,
       });
-      res.send({ message: "post successfully updated", post });
+      res.send({ message: "Post successfully updated", post });
     } catch (error) {
       console.error(error);
     }
