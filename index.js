@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const cors = require('cors')
 const PORT = process.env.PORT || 8787;
 const { dbConnection } = require("./config/config");
 const { typeError } = require("./middlewares/errors");
@@ -8,6 +9,7 @@ const swaggerUI = require('swagger-ui-express')
 const docs = require('./docs/index')
 
 dbConnection();
+app.use(cors())
 app.use("/posts", require("./routes/posts"));
 app.use("/users", require("./routes/users"));
 //app.use(typeError);
