@@ -14,6 +14,11 @@ const UserController = {
       let hash = req.body.password ? req.body.password : null;
       if (req.body.password) {
         hash = bcrypt.hashSync(req.body.password, 10);
+        const existUser = await User.findOne({ email: req.body.email });
+        console.log(existUser)
+        if (existUser) {
+          return res.status(400).send("This email already exists")
+        }
       }
       const user = await User.create({
         ...req.body,
@@ -113,7 +118,8 @@ const UserController = {
       }
       const user = await User.findOne({
         email: req.body.email,
-      });
+      }) 
+        .populate("postIds")
       const isMatch = await bcrypt.compare(req.body.password, user.password);
       if (!isMatch) {
         return res.status(400).send({ message: "Password or name incorrect" });
@@ -125,7 +131,7 @@ const UserController = {
       if (user.tokens.length > 4) user.tokens.shift();
       user.tokens.push(token);
       await user.save();
-      return res.send({user, token});
+      return res.send({ message: "Welcome", user, token });
     } catch (error) {
       console.error(error);
       res.status(500).send({
@@ -174,7 +180,7 @@ const UserController = {
         })
         .populate("followers", "name")
         .populate("following", "name");
-      res.send(user);
+      res.send({message: "information", user});
     } catch (error) {
       console.error(error);
       res.status(500).send({

@@ -12,7 +12,7 @@ router.delete("/id/:_id", authentication, isAdmin, UserController.delete);
 router.put("/id/:_id", authentication, uploadUserPostsImages.single('image'), UserController.update);
 router.get("/confirm/:emailToken", UserController.confirm);
 router.post("/login", UserController.login);
-router.put("/logout", authentication, UserController.logout);
+router.delete("/logout", authentication, UserController.logout);
 router.get("/getinfo", authentication, UserController.getInfo);
 router.put("/follow/:_id", authentication, UserController.follow);
 router.put("/unfollow/:_id", authentication, UserController.unFollow);

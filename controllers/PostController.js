@@ -18,7 +18,7 @@ const PostController = {
   },
   async getAll(req, res) {
     try {
-      const { page = 1, limit = 5 } = req.query;
+      const { page = 1, limit = 200 } = req.query;
       const posts = await Post.find()
         .populate("userId")
         .populate("comments.userId")
